@@ -111,13 +111,12 @@ async function scrapYouTubeUsername(browser, url, name) {
     try { pageData.dateCreated = await page.$$eval('div.YouTubeUserTopInfo span', (elements) => elements[elements.length - 1].textContent.trim());  } catch (error) { console.warn('scrap internal err: ' + name, error) }
     try { pageData.grade = await page.$eval('div#socialblade-user-content div div div', (element) => element.textContent.trim()); } catch (error) { console.warn('scrap internal err: ' + name, error) }
     
-
     try { pageData.estMonEarn = await page.$eval('div#socialblade-user-content > div:nth-child(3) > div:nth-child(2) > p:nth-child(1)', (element) => element.textContent.trim()); } catch (error) { console.warn('scrap internal err: ' + name, error) }
     try { pageData.estYearEarn = await page.$eval('div#socialblade-user-content > div:nth-child(5) > div:nth-child(1) > div:nth-child(2) > p:nth-child(1)', (element) => element.textContent.trim()); } catch (error) { console.warn('scrap internal err: ' + name, error) }
 
     try { pageData.averageDailySubs = await page.$eval('div#averagedailysubs', (element) => element.textContent.trim()); } catch (error) { console.warn('scrap internal err: ' + name, error) }
     try { pageData.averageDailyViews = await page.$eval('div#averagedailyviews', (element) => element.textContent.trim()); } catch (error) { console.warn('scrap internal err: ' + name, error) }
-    try { pageData.erageDailyEarn = await page.$eval('div#socialblade-user-content > div:nth-child(21) > div:nth-child(4)', (element) => element.textContent.trim()); } catch (error) { console.warn('scrap internal err: ' + name, error) }
+    try { pageData.averageDailyEarn = await page.$eval('div#socialblade-user-content > div:nth-child(21) > div:nth-child(4)', (element) => element.textContent.trim()); } catch (error) { console.warn('scrap internal err: ' + name, error) }
 
     try { pageData.averageWeeklySubs = await page.$eval('div#socialblade-user-content > div:nth-child(22) > div:nth-child(2) > span:nth-child(1)', (element) => element.textContent.trim()); } catch (error) { console.warn('scrap internal err: ' + name, error) }
     try { pageData.averageWeeklyViews = await page.$eval('div#socialblade-user-content > div:nth-child(22) > div:nth-child(3) > span:nth-child(1)', (element) => element.textContent.trim()); } catch (error) { console.warn('scrap internal err: ' + name, error) }
@@ -134,7 +133,7 @@ async function scrapYouTubeUsername(browser, url, name) {
         await page.$eval('div#YouTubeUserMenu > a:nth-child(6)', (element) => element.click());
         await page.waitForSelector('div.RowRecentTable');
 
-        pageData.videosHeaders = await page.$$eval('div#socialblade-user-content div.TableHeader', (elements) => elements.map((element) => element.textContent.trim()));
+        pageData.recentVideosHeaders = await page.$$eval('div#socialblade-user-content div.TableHeader', (elements) => elements.map((element) => element.textContent.trim()));
         const recentVideosElements = await page.$$('div.RowRecentTable');
         pageData.recentVideos = []
 
@@ -158,9 +157,10 @@ async function scrapYouTubeUsername(browser, url, name) {
  * @param {number} batchLimit number of tasks to run in a batch.
  * @param {number} newTabDelay delay to wait before opening new tab.
  * @param {number} newBatchDelay delay to wait before starting a new batch.
+ * @param {Function} formatter callback function that all objects all passed.
  * @returns {ScrappedData[]} scrapped data for all channel names.
  */
-async function runScrapBatches(browser, channelsDistNames, baseUrl, batchLimit, newTabDelay = 0, newBatchDelay = 0) {    
+async function runScrapBatches(browser, channelsDistNames, baseUrl, batchLimit, newTabDelay = 0, newBatchDelay = 0, formatter = undefined) {    
     const scrappedData = []
 
     const batchesCount = Math.floor(channelsDistNames.length / batchLimit) + 1
@@ -181,7 +181,7 @@ async function runScrapBatches(browser, channelsDistNames, baseUrl, batchLimit, 
                 batchPromises.push(scrapYouTubeUsername(browser, baseUrl + channelName, channelName))    
             }
         }
-        const batchResponses = await Promise.all(batchPromises)
+        const batchResponses = await Promise.all(batchPromises).then(responses => formatter ? responses.map(v => formatter(v)) : responses)
         scrappedData.push(...batchResponses)
         console.log('Done batch ', i)
 
@@ -193,6 +193,56 @@ async function runScrapBatches(browser, channelsDistNames, baseUrl, batchLimit, 
     return scrappedData
 }
 
+/**
+ * Format SocialBlade single number,
+ * 
+ * @param {string} number SocialBlade single number to format.
+ * @returns {{number, unit}} formatted number
+ */
+function formatSocialBladeNumber(number) {
+    if (typeof number !== 'string') {
+        return number
+    }
+
+    if (number.includes('-') && !number.trim().startsWith('-')) {
+        const parts = number.split('-')
+        return [formatSocialBladeNumber(parts[0]), formatSocialBladeNumber(parts[1])]
+    }
+
+    const trimmed = number.trim().replaceAll(/ /gi, '').toLocaleLowerCase()
+
+    let multiplier = 1
+    let numberEndIndex = trimmed.length
+    if (trimmed.endsWith('m')) {
+        multiplier = 1000000
+        numberEndIndex = trimmed.length - 1
+    } else if (trimmed.endsWith('k')) {
+        multiplier = 1000
+        numberEndIndex = trimmed.length - 1
+    }
+
+    let numberStartIndex = 0
+    let unit = ''
+    if (isNaN(trimmed.substring(0, 1))) {
+        unit = trimmed.substring(0, 1)
+        if (unit === '+') {
+            unit = ''
+        } else if (unit === '-') {
+            unit = ''
+            multiplier = multiplier * -1                 
+        }
+        numberStartIndex = 1
+    }
+
+    const trimmedNumber = trimmed.substring(numberStartIndex, numberEndIndex).replaceAll(/,/gi, '')
+
+    if (isNaN(trimmedNumber)) {
+        console.log('Error formatting: ', trimmedNumber, '>>', trimmed, '>>', number)
+        return number
+    }
+
+    return parseFloat(trimmedNumber) * multiplier
+}
 
 /**
  * Delay current thead.
@@ -211,5 +261,7 @@ module.exports = {
     writeDataToFile,
     scrapYouTubeUsername,
     runScrapBatches,
+    formatSocialBladeNumber,
+
     delay,
 }

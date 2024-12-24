@@ -7,7 +7,7 @@ module.exports = {
     // channels base youtube url. used to extract channel name from url.
     channelsUrlBase: 'https://www.youtube.com/@',
     // list of channels in a filename.
-    channelsFilename: './channels5.txt',
+    channelsFilename: './channels.txt',
     // number of tabs to open at same time.
     batchLimit: 4,
     // delay before a new batch starts.

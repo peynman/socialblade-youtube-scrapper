@@ -7,39 +7,45 @@ A simple node.js and puppeteer tool to scrap SocialBlade YouTube analytics.
 * Puppeteer > 23.11
 
 ## Usage
-* Put all YouTube channels urls you want to scrap in a file, for example (channels.txt).
+* Put all YouTube channels urls you want to scrap in a file, for example (`channels.txt`).
 * Open config.js and configure puppeteer and scrapping environment.
+    * You need specify chromium executable path.
+    * Remove proxy from args if you don not use one.
+    * Avoiding headless Chrome helps when u need to verify YOU ARE HUMAN, since you are going to hit limits when scrapping large lists.
+    * Use `batchLimit` to set number of maximum tabs to open when scrapping.
+    * Use `newBatchDelay` and `newTabDelay` to avoid hitting limitations.
+    * Keeping sessions consistent between runs allows you to better mimic real browser behavior with `chromiumSessionDataDir`.
 * Install modules: `npm install`
-* Run scrapper: `node scrapper.js`
+* Run scrapper: `node scrapper.js` or `npm run scrapper`
 
 ## Output
-* A JSON list of scrapped info to a file with same name as channelsFilename with `.json`.
+* A JSON list of scrapped info to a file with same name as `channelsFilename` with `.json` as extension (`channels.txt.json`).
 ```json
 [
     {
         "youtuberName": "Sample",
         "channelName": "@sample",
-        "uploads": "xx",
-        "subs": "xx",
-        "views": "xx",
+        "uploads": 238,
+        "subs": 1000000,
+        "views": 100000000,
         "country": "xx",
         "channelType": "xx",
         "dateCreated": "xxx 22nd, 20xx",
         "grade": "xx",
-        "estMonEarn": "€xx  -  €xx",
-        "estYearEarn": "€xx  -  €xK",
-        "averageDailySubs": "+x",
-        "averageDailyViews": "+x,xxx",
-        "erageDailyEarn": "€x  -  €xx",
-        "averageWeeklySubs": "+xx",
-        "averageWeeklyViews": "+xx,xx",
-        "averageWeeklyEarn": "€8  -  €124",
-        "last30DaySubs": "+1.1K",
-        "last30DayViews": "+146,522",
-        "last30DayEarn": "€33  -  €533",
+        "estMonEarn": [1000, 12000],
+        "estYearEarn": [1000, 12000],
+        "averageDailySubs": -100,
+        "averageDailyViews": 10000,
+        "averageDailyEarn": [1000, 12000],
+        "averageWeeklySubs": 1000,
+        "averageWeeklyViews": -100000,
+        "averageWeeklyEarn": [1000, 12000],
+        "last30DaySubs": 10000,
+        "last30DayViews": -100000,
+        "last30DayEarn": [1000, 12000],
         "headerBackground": "https://socialblade.dev/api/youtube/xxx",
         "avatar": "https://yt3.ggpht.com/xxx",
-        "videosHeaders": [
+        "recentVideosHeaders": [
             "•Date•",
             "Video Title",
             "Views",

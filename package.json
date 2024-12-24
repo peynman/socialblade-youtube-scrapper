@@ -1,10 +1,11 @@
 {
-  "name": "web-scraper",
+  "name": "socialblade-youtube-scraper",
   "version": "1.0.0",
-  "description": "",
+  "description": "Scrap YouTube profile data from SocialBlade with Puppeteer",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scrapper": "node scrapper.js"
   },
   "keywords": [],
   "author": "",
