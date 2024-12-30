@@ -9,11 +9,11 @@ module.exports = {
     // list of channels in a filename.
     channelsFilename: './channels.txt',
     // number of tabs to open at same time.
-    batchLimit: 4,
+    batchLimit: 6,
     // delay before a new batch starts.
-    newBatchDelay: 1000,
+    newBatchDelay: 1500,
     // delay before next tab opened.
-    newTabDelay: 1000,
+    newTabDelay: 5000,
     // chromium settings
     chromiumArgs: [
         // use proxy for chromium
@@ -23,6 +23,9 @@ module.exports = {
     chromiumSessionDataDir: './session/',
     // executable path
     chromiumExePath: '/usr/bin/chromium',
-    // heedless chromium
-    runHeadless: false,
+    // heedless chromium, does not work without puppeteer-extra and its plugins
+    runHeadless: true,
+    // load when browsing images (disable for better performance)
+    loadImages: false,
+    
 }

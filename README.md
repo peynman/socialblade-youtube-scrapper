@@ -1,10 +1,14 @@
 # SocialBlade YouTube Scrapper
 A simple node.js and puppeteer tool to scrap SocialBlade YouTube analytics.
 
-## Dependencies
+## Requirements
 * NodeJS > 20
 * Chromium > 127
+
+## Dependencies
 * Puppeteer > 23.11
+* puppeteer-extra > 3.3
+* puppeteer-extra-plugin-stealth
 
 ## Usage
 * Put all YouTube channels urls you want to scrap in a file, for example (`channels.txt`).
@@ -17,6 +21,7 @@ A simple node.js and puppeteer tool to scrap SocialBlade YouTube analytics.
     * Keeping sessions consistent between runs allows you to better mimic real browser behavior with `chromiumSessionDataDir`.
 * Install modules: `npm install`
 * Run scrapper: `node scrapper.js` or `npm run scrapper`
+    * start with custom channelsFilename: `node scrapper.js --channelsFilename=./my-custom-list.txt`
 
 ## Output
 * A JSON list of scrapped info to a file with same name as `channelsFilename` with `.json` as extension (`channels.txt.json`).
@@ -45,15 +50,8 @@ A simple node.js and puppeteer tool to scrap SocialBlade YouTube analytics.
         "last30DayEarn": [1000, 12000],
         "headerBackground": "https://socialblade.dev/api/youtube/xxx",
         "avatar": "https://yt3.ggpht.com/xxx",
-        "recentVideosHeaders": [
-            "•Date•",
-            "Video Title",
-            "Views",
-            "Rating%",
-            "Comments",
-            "Est. Earnings"
-        ],
-        "recentVideos": []
+        "recentVideos": [],
+        "mostViewedVideos": [],
     },
 ]
 ```

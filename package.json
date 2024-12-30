@@ -1,17 +1,22 @@
 {
   "name": "socialblade-youtube-scraper",
   "version": "1.0.0",
-  "description": "Scrap YouTube profile data from SocialBlade with Puppeteer",
-  "main": "index.js",
+  "description": "Scrap YouTube profile data from SocialBlade with Puppeteer and chromium",
+  "main": "scraper.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "scrapper": "node scrapper.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "youtube",
+    "scrapper",
+    "socialblade"
+  ],
+  "author": "peynman",
+  "license": "MIT",
   "dependencies": {
-    "json2csv": "^6.0.0-alpha.2",
-    "puppeteer": "^23.11.1"
+    "puppeteer": "^23.11.1",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   }
 }
