@@ -22,7 +22,7 @@ A simple node.js and puppeteer tool to scrap SocialBlade YouTube analytics.
 * Install modules: `npm install`
 * Run scrapper: `node scrapper.js` or `npm run scrapper`
     * start with custom channelsFilename: `node scrapper.js --channelsFilename=./my-custom-list.txt`
-
+ 
 ## Output
 * A JSON list of scrapped info to a file with same name as `channelsFilename` with `.json` as extension (`channels.txt.json`).
 ```json

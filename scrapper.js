@@ -13,6 +13,7 @@ const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
  */
 
 (async () => {
+    // override config settings with command line args
     process.argv.forEach(function (val) {
         Object.keys(config).forEach(key => {
             if (val.startsWith('--' + key)) {
@@ -29,6 +30,7 @@ const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
         })
     })
 
+    // puppeteer extra plugins
     puppeteer.use(StealthPlugin())
     puppeteer.use(AdblockerPlugin({ blockTrackers: true }))
 

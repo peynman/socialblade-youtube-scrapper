@@ -92,7 +92,7 @@ async function scrapYouTubeUsername(browser, url, name, config) {
                 }
             }
         } catch (error) { console.warn('scrap internal err: ' + name, error) }
-
+        
         // extract user details
         try { pageData.youtuberName = await page.$eval('div#YouTubeUserTopInfoBlockTop h1', (element) => element.textContent.trim()) } catch (error) { console.warn('scrap internal err: ' + name, error) }
         try { pageData.channelName = await page.$eval('div#YouTubeUserTopInfoBlockTop h4', (element) => element.textContent.trim()) } catch (error) { console.warn('scrap internal err: ' + name, error) }
